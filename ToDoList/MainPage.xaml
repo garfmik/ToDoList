@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ToDoList.MainPage"
+             Title="Список дел">
+
+    <VerticalStackLayout Padding="16" Spacing="12">
+        <Grid ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Entry
+                x:Name="NewItemEntry"
+                Placeholder="Новая задача"
+                Grid.Column="0"
+                Text="{Binding NewTitle, Mode=TwoWay}" />
+
+            <Picker
+                Grid.Column="1"
+                ItemsSource="{Binding Categories}"
+                ItemDisplayBinding="{Binding Name}"
+                SelectedItem="{Binding SelectedCategory, Mode=TwoWay}" />
+
+            <Button
+                Grid.Column="2"
+                Text="Добавить"
+                Padding="12,6"
+                TextColor="White"
+                BackgroundColor="Black"
+                Command="{Binding AddCommand}" />
+        </Grid>
+        
+        <CollectionView ItemsSource="{Binding Items}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="4" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems Mode="Execute">
+                                <SwipeItem
+                                    Text="Удалить"
+                                    BackgroundColor="Tomato"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
+                        <Frame
+                            BorderColor="{Binding Category.Color}"
+                            CornerRadius="12"
+                            Padding="6"
+                            HasShadow="False"
+                            BackgroundColor="White">
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+
+                                <CheckBox
+                                    IsChecked="{Binding IsCompleted}"
+                                    VerticalOptions="Center"
+                                    Color="Black"/>
+
+                                <StackLayout Grid.Column="1" Spacing="2">
+                                    <Label
+                                        Text="{Binding Title}"
+                                        VerticalOptions="Center"
+                                        LineBreakMode="TailTruncation"
+                                        FontSize="16"
+                                        FontAttributes="Bold">
+                                        <Label.Style>
+                                            <Style TargetType="Label">
+                                                <Setter Property="TextDecorations" Value="None" />
+                                                <Style.Triggers>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding IsCompleted}" Value="True">
+                                                        <Setter Property="TextDecorations" Value="Strikethrough" />
+                                                        <Setter Property="Opacity" Value="0.6" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Label.Style>
+                                    </Label>
+                                    <Label
+                                        Text="{Binding Category.Name}"
+                                        TextColor="{Binding Category.Color}"
+                                        FontSize="12"
+                                        Opacity="0.8" />
+
+                                </StackLayout>
+
+                                <Button
+                                    Grid.Column="2"
+                                    Text="🗑️"
+                                    BackgroundColor="Black"
+                                    TextColor="White"
+                                    VerticalOptions="Center"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Frame>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </VerticalStackLayout>
+</ContentPage>
